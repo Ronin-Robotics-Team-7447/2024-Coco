@@ -9,19 +9,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ExampleSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  public ExampleSubsystem() {
-    // test robot code #2
-  }
+  public ExampleSubsystem() {}
 
   /**
    * Example command factory method.
    *
    * @return a command
    */
-
-
-
-
 
   public Command exampleMethodCommand() {
     // Inline construction of command goes here.
