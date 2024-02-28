@@ -56,22 +56,22 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     swerveDrive.setHeadingCorrection(false); 
     // ^^Heading correction should only be used while controlling the robot via angle.
+    swerveDrive.setCosineCompensator(!SwerveDriveTelemetry.isSimulation); //disable werid function
     setupPathPlanner();
   }
-    public SwerveSubsystem(
-      SwerveDriveConfiguration driveCfg, 
-      SwerveControllerConfiguration controllerCfg)
-  {
+  public SwerveSubsystem(
+    SwerveDriveConfiguration driveCfg, 
+    SwerveControllerConfiguration controllerCfg){
     swerveDrive = new SwerveDrive(driveCfg, controllerCfg, maximumSpeed);
   }
   // setupPathPlanner needs to be tuned and double check
   public void setupPathPlanner(){
     AutoBuilder.configureHolonomic(
         this::getPose, // Robot pose supplier
-        this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+        this::resetOdometry, // Method to reset odometry (will be called if auto has a starting pose)
         this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-        new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+        new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in Constants class
                                          new PIDConstants(5.0, 0.0, 0.0),
                                          // Translation PID constants
                                          new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p,
