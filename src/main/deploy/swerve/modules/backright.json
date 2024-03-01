@@ -6,12 +6,12 @@
   "absoluteEncoderOffset": 54.0572,
   "drive": {
     "type": "sparkmax",
-    "id": 6,
+    "id": 1,
     "canbus": null
   },
   "angle": {
     "type": "sparkmax",
-    "id": 5,
+    "id": 2,
     "canbus": null
   },
   "conversionFactor": {

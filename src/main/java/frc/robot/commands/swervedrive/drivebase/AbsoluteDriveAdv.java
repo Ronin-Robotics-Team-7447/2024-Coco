@@ -24,10 +24,10 @@ public class AbsoluteDriveAdv extends Command
 {
 
   private final SwerveSubsystem swerve;
-  private final DoubleSupplier  vX, vY;
-  private final DoubleSupplier  headingAdjust;
+  private final DoubleSupplier vX, vY;
+  private final DoubleSupplier headingAdjust;
   private final BooleanSupplier lookAway, lookTowards, lookLeft, lookRight;
-  private       boolean         resetHeading = false;
+  private boolean resetHeading = false;
 
   /**
    * Used to drive a swerve robot in full field-centric mode.  vX and vY supply translation inputs, where x is

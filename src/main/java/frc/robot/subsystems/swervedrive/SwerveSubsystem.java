@@ -22,10 +22,13 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
+import swervelib.SwerveDriveTest;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
@@ -155,7 +158,36 @@ public class SwerveSubsystem extends SubsystemBase {
                                                                           swerveDrive.getMaximumVelocity()));
         });
       }
-  
+
+  public Command sysIdDriveMotorCommand()
+  {
+    return SwerveDriveTest.generateSysIdCommand(
+        SwerveDriveTest.setDriveSysIdRoutine(
+            new Config(),
+            this, swerveDrive, 12),
+        3.0, 5.0, 3.0);
+  }
+
+  public Command sysIdAngleMotorCommand()
+  {
+    return SwerveDriveTest.generateSysIdCommand(
+        SwerveDriveTest.setAngleSysIdRoutine(
+            new Config(),
+            this, swerveDrive),
+        3.0, 5.0, 3.0);
+  }
+  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
+  {
+    return run(() -> {
+      // Make the robot move
+      swerveDrive.drive(new Translation2d(Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
+                                          Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
+                        Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
+                        true,
+                        false);
+    });
+  }
+
   public void drive(Translation2d translation, double rotation, boolean fieldRelative){
     swerveDrive.drive(translation,rotation,fieldRelative,false);
   }
@@ -216,7 +248,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public Rotation2d getHeading()
   {
-    return swerveDrive.getYaw();
+    return getPose().getRotation();
   }
 
   // this takes chassis speed inputs from two joystick CHECK WITH AMY
@@ -224,8 +256,24 @@ public class SwerveSubsystem extends SubsystemBase {
   {
     xInput = Math.pow(xInput, 3);
     yInput = Math.pow(yInput, 3);
-    return swerveDrive.swerveController.getTargetSpeeds(
-      xInput,yInput,headingX,headingY,getHeading().getRadians(),maximumSpeed);
+    return swerveDrive.swerveController.getTargetSpeeds(xInput,
+                                                        yInput,
+                                                        headingX,
+                                                        headingY,
+                                                        getHeading().getRadians(),
+                                                        maximumSpeed);
+  }
+
+
+  public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle)
+  {
+    xInput = Math.pow(xInput, 3);
+    yInput = Math.pow(yInput, 3);
+    return swerveDrive.swerveController.getTargetSpeeds(xInput,
+                                                        yInput,
+                                                        angle.getRadians(),
+                                                        getHeading().getRadians(),
+                                                        maximumSpeed);
   }
 
   public ChassisSpeeds getFieldVelocity()
@@ -259,5 +307,11 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   // FAKE vision reading? 
+
+  public void addFakeVisionReading()
+  {
+    swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
+  }
+
 
 }
